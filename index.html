@@ -1,0 +1,302 @@
+<html><head><base href="https://www.youtube.com/watch?v=A4Loz6LdZIQ">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Trippy Star Trek: The Motion Picture Experience</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    cursor: none;
+  }
+  #space-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.3;
+  }
+  .video-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 45vw;
+    max-width: 800px;
+    max-height: 450px;
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+    animation: pulse 2s infinite alternate;
+    overflow: hidden;
+  }
+  .video-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    opacity: 0.7;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); }
+    50% { box-shadow: 0 0 100px rgba(255, 0, 255, 0.5); }
+    100% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); }
+  }
+  #custom-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  #trippy-text {
+    position: fixed;
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: 2px 2px rgba(255, 0, 255, 0.4), -2px -2px rgba(0, 255, 255, 0.4);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .warp-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.9) 70%);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+  <canvas id="space-background"></canvas>
+  <div class="video-container">
+    <iframe src="https://www.youtube.com/embed/A4Loz6LdZIQ?autoplay=1&controls=0&showinfo=0&autohide=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <svg id="custom-cursor" width="50" height="50" viewBox="0 0 50 50">
+    <polygon points="25,5 5,45 45,45" fill="none" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2">
+      <animate attributeName="stroke" values="rgba(255,255,255,0.4);rgba(0,255,255,0.4);rgba(255,0,255,0.4);rgba(255,255,255,0.4)" dur="4s" repeatCount="indefinite" />
+    </polygon>
+  </svg>
+  <div id="trippy-text"></div>
+  <div class="warp-effect"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<script>
+const cursor = document.getElementById('custom-cursor');
+const trippyText = document.getElementById('trippy-text');
+const body = document.body;
+const videoContainer = document.querySelector('.video-container');
+
+// Space background
+const canvas = document.getElementById('space-background');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const stars = [];
+const numStars = 100;
+
+for (let i = 0; i < numStars; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 1.5,
+    speed: Math.random() * 2 + 0.5
+  });
+}
+
+function drawSpace() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  stars.forEach(star => {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    star.y += star.speed;
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  });
+}
+
+setInterval(drawSpace, 33);
+
+// Custom cursor follow
+document.addEventListener('mousemove', (e) => {
+  gsap.to(cursor, {duration: 0.3, left: e.clientX - 25, top: e.clientY - 25});
+});
+
+// Trippy text
+const trippyWords = ['ENGAGE', 'WARP SPEED', 'BEAM ME UP', 'ENTERPRISE', 'BOLDLY GO'];
+setInterval(() => {
+  trippyText.innerText = trippyWords[Math.floor(Math.random() * trippyWords.length)];
+  trippyText.style.left = Math.random() * window.innerWidth + 'px';
+  trippyText.style.top = Math.random() * window.innerHeight + 'px';
+  trippyText.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() + 0.5})`;
+}, 2000);
+
+// Make video container trippy
+function trippiness() {
+  gsap.to(videoContainer, {
+    borderRadius: () => `${Math.random() * 50}% ${Math.random() * 50}% ${Math.random() * 50}% ${Math.random() * 50}%`,
+    boxShadow: () => `0 0 ${Math.random() * 100 + 50}px rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`,
+    duration: 3,
+    ease: 'power2.inOut',
+    onComplete: trippiness
+  });
+}
+
+trippiness();
+
+// Make everything go even trippier on click
+document.addEventListener('click', () => {
+  gsap.to(videoContainer, {
+    scale: 1.2,
+    duration: 0.5,
+    ease: 'elastic.out(1, 0.3)',
+    onComplete: () => gsap.to(videoContainer, {scale: 1, duration: 0.5})
+  });
+
+  gsap.to('body', {
+    backgroundColor: () => `hsla(${Math.random() * 360}, 100%, 5%, 0.3)`,
+    duration: 0.5
+  });
+
+  // Add exploding star
+  const explosion = document.createElement('div');
+  explosion.style.position = 'fixed';
+  explosion.style.left = '50%';
+  explosion.style.top = '50%';
+  explosion.style.fontSize = '100px';
+  explosion.style.color = 'rgba(255, 255, 255, 0.4)';
+  explosion.innerHTML = '&#9733;'; // Star symbol
+  document.body.appendChild(explosion);
+
+  gsap.fromTo(explosion, 
+    {scale: 0, opacity: 1, rotation: 0},
+    {scale: 5, opacity: 0, rotation: 720, duration: 1.5, ease: 'power2.out', onComplete: () => explosion.remove()}
+  );
+});
+
+// Add a warp speed effect
+const warpEffect = document.querySelector('.warp-effect');
+let warpActive = false;
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && !warpActive) {
+    warpActive = true;
+    gsap.to(warpEffect, {
+      background: 'radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.9) 70%)',
+      duration: 0.5
+    });
+    gsap.to(stars, {
+      speed: 8,
+      radius: 2.5,
+      duration: 0.5
+    });
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.code === 'Space') {
+    warpActive = false;
+    gsap.to(warpEffect, {
+      background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.9) 70%)',
+      duration: 0.5
+    });
+    gsap.to(stars, {
+      speed: () => Math.random() * 2 + 0.5,
+      radius: () => Math.random() * 1.5,
+      duration: 0.5
+    });
+  }
+});
+
+// Add a trippy mouse trail effect
+const trailContainer = document.createElement('div');
+document.body.appendChild(trailContainer);
+
+document.addEventListener('mousemove', (e) => {
+  const trail = document.createElement('div');
+  trail.style.position = 'fixed';
+  trail.style.width = '15px';
+  trail.style.height = '15px';
+  trail.style.borderRadius = '50%';
+  trail.style.border = `2px solid hsla(${Math.random() * 360}, 100%, 50%, 0.4)`;
+  trail.style.left = e.clientX + 'px';
+  trail.style.top = e.clientY + 'px';
+  trail.style.pointerEvents = 'none';
+  trailContainer.appendChild(trail);
+
+  gsap.to(trail, {
+    scale: 0,
+    opacity: 0,
+    duration: 1,
+    onComplete: () => trail.remove()
+  });
+});
+
+// Add a subtle pulsating effect to the video container
+gsap.to(videoContainer, {
+  scale: 1.05,
+  duration: 2,
+  repeat: -1,
+  yoyo: true,
+  ease: 'sine.inOut'
+});
+
+// Create a glitch effect on the video container
+function createGlitchEffect() {
+  const glitchInterval = setInterval(() => {
+    const glitchDuration = Math.random() * 0.2;
+    const glitchX = Math.random() * 10 - 5;
+    const glitchY = Math.random() * 10 - 5;
+
+    gsap.to(videoContainer, {
+      x: glitchX,
+      y: glitchY,
+      skewX: glitchX,
+      skewY: glitchY,
+      duration: glitchDuration,
+      onComplete: () => {
+        gsap.to(videoContainer, {
+          x: 0,
+          y: 0,
+          skewX: 0,
+          skewY: 0,
+          duration: glitchDuration
+        });
+      }
+    });
+  }, 5000);
+
+  return () => clearInterval(glitchInterval);
+}
+
+const stopGlitchEffect = createGlitchEffect();
+
+// Clean up function (if needed)
+// window.addEventListener('beforeunload', stopGlitchEffect);
+</script>
+</body>
+</html>
